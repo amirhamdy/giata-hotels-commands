@@ -1,0 +1,28 @@
+{
+    "name": "amirhamdy/giata-hotels-commands",
+    "description": "this is a giata hotels commands",
+    "authors": [
+        {
+            "name": "Amir Hamdy",
+            "email": "amirhamdy4@gmail.com"
+        }
+    ],
+    "version": "1.0.0",
+    "minimum-stability": "dev",
+    "license": [
+        "MIT"
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "GiataCommands\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "GiataCommands\\GiataCommandsServiceProvider"
+            ]
+        }
+    }
+}

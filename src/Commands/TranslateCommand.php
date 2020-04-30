@@ -3,7 +3,7 @@
 namespace GiataCommands;
 
 use Carbon\Carbon;
-use GiataHotels\API;
+use GiataAPI;
 use GiataHotels\XmlToArray;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +42,7 @@ class TranslateCommand extends Command
                 $bar->advance();
                 foreach ($languages as $language) {
 //                    $this->comment(PHP_EOL . 'working on (' . $language . ') language for (giataId: ' . $hotel->giataId . ').');
-                    $response = API::getTextsByGiataId($hotel->giataId, $language);
+                    $response = GiataAPI::getTextsByGiataId($hotel->giataId, $language);
                     if (isset($response['status']) && $response['status'] != 200) {
                         $this->error(PHP_EOL . $response['error']);
                         continue;

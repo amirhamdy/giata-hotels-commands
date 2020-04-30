@@ -3,7 +3,7 @@
 namespace GiataCommands;
 
 use Carbon\Carbon;
-use GiataHotels\API;
+use GiataAPI;
 use GiataHotels\XmlToArray;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -40,7 +40,7 @@ class ImagesCommand extends Command
 
             foreach ($hotels as $hotel) {
                 $bar->advance();
-                $response = API::getImagesByGiataId($hotel->giataId);
+                $response = GiataAPI::getImagesByGiataId($hotel->giataId);
                 if (isset($response['status']) && $response['status'] != 200) {
                     $this->comment(PHP_EOL . $response['error']);
                     continue;

@@ -7,7 +7,7 @@ use GiataHotels\XmlToArray;
 use http\Env\Response;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use GiataHotels\API;
+use GiataAPI;
 use GiataCommands\CommandsHelper;
 
 class InitialCommand extends Command
@@ -30,7 +30,7 @@ class InitialCommand extends Command
         DB::table($tableName)->truncate(); // to be removed
         $this->comment(PHP_EOL . 'working on ' . count($countries) . ' countries');
         foreach ($countries as $country) {
-            $response = API::getHotelsByCountry($country, true);
+            $response = GiataAPI::getHotelsByCountry($country, true);
             $this->init($response, $country, $columns, $tableName);
         }
         $endTime = date("h:i:sa");
@@ -63,7 +63,7 @@ class InitialCommand extends Command
         $bar->finish();
         $more = isset($response['more']) ? $response['more'] : false;
         if ($more) {
-            $response = API::getHotelsByCountry($country, true, $lastGiataId);
+            $response = GiataAPI::getHotelsByCountry($country, true, $lastGiataId);
             $this->init($response, $country, $columns, $tableName);
         }
     }

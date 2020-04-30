@@ -4,7 +4,7 @@ namespace GiataCommands;
 
 use Carbon\Carbon;
 use GiataCommands\CommandsHelper;
-use GiataHotels\API;
+use GiataAPI;
 use GiataHotels\XmlToArray;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +35,7 @@ class UpdateCommand extends Command
             foreach ($hotels as $hotel) {
                 $bar->advance();
                 $hotel = json_decode(json_encode($hotel), true);
-                $response = API::getHotelByGiataId($hotel['giataId']);
+                $response = GiataAPI::getHotelByGiataId($hotel['giataId']);
                 $hotelUpdated = XmlToArray::reformatHotel($response['property']);
                 $data = [];
                 foreach ($columns as $column) {

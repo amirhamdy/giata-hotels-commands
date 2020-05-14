@@ -8,6 +8,7 @@ class GiataCommandsServiceProvider extends ServiceProvider
 {
 
     protected $commands = [
+        'GiataCommands\ProviderIDsCommand',
         'GiataCommands\InitialCommand',
         'GiataCommands\UpdateCommand',
         'GiataCommands\TranslateCommand',

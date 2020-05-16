@@ -25,7 +25,7 @@ class ProviderIDsCommand extends Command
         $providers = config('giata-commands.providers.names');
         $tableName = config('giata-commands.providers.table');
         $columns = config('giata-commands.providers.columns');
-        DB::table($tableName)->truncate(); // to be removed
+//        DB::table($tableName)->truncate(); // to be removed
         foreach ($providers as $count => $provider) {
             $this->comment(PHP_EOL . 'working on ' . $providers[$count] . ' number ' . ($count + 1) . ' of ' . count($providers) . ' providers');
             $response = GiataAPI::getHotelsProviderIDs($provider);

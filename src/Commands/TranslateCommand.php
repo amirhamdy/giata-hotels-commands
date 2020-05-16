@@ -26,7 +26,7 @@ class TranslateCommand extends Command
         $translationTableName = config('giata-commands.translation.table');
 
         // to be removed
-        DB::table($translationTableName)->truncate();
+//        DB::table($translationTableName)->truncate();
 
         DB::table($tableName)->select('giataId')->orderBy('created_at')->chunk(200, function ($hotels) {
             $startTime = date("h:i:sa");

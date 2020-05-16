@@ -27,7 +27,7 @@ class InitialCommand extends Command
         $countries = config('giata-commands.countries');
         $tableName = config('giata-commands.table');
         $columns = config('giata-commands.columns');
-        DB::table($tableName)->truncate(); // to be removed
+//        DB::table($tableName)->truncate(); // to be removed
         $this->comment(PHP_EOL . 'working on ' . count($countries) . ' countries');
         foreach ($countries as $country) {
             $response = GiataAPI::getHotelsByCountry($country, true);

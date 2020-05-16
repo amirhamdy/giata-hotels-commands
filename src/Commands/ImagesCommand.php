@@ -27,7 +27,7 @@ class ImagesCommand extends Command
         $imagesTableName = config('giata-commands.images.table');
 
         // to be removed
-        DB::table($imagesTableName)->truncate();
+//        DB::table($imagesTableName)->truncate();
 
         DB::table($tableName)->select('giataId')->orderBy('created_at')->chunk(300, function ($hotels) {
             $startTime = date("h:i:sa");

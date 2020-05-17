@@ -6,8 +6,12 @@ return [
     // DB Table Name
     'table' => '__hotels',
 
-    // DB Hotels Table columns
-    'columns' => ['giataId', 'name', 'propertyCodes', 'ghgml', 'city', 'cityId', 'address', 'phones', 'faxes', 'chains'],
+    // DB Hotels Table columns ['db_column_name' => 'giata_column_name']
+    // Note: First [$key => $value] MUST exact === [$db_giataId_name => $giataId]
+    'columns' => [
+        'giataId' => 'giataId',
+        'name' => 'name'
+    ],
 
     // Last update date Y-m-d
     'date' => '2020-04-15',

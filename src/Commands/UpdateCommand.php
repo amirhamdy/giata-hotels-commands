@@ -18,7 +18,7 @@ class UpdateCommand extends Command
     public function __construct()
     {
         parent::__construct();
-        DB::connection()->enableQueryLog();
+//        DB::connection()->enableQueryLog();
     }
 
     public function handle()
@@ -26,7 +26,7 @@ class UpdateCommand extends Command
         $tableName = config('giata-commands.table');
         $columns = config('giata-commands.columns');
         $date = config('giata-commands.date');
-        DB::table($tableName)->select($columns)->orderBy('created_at')->chunk(500, function ($hotels) {
+        DB::table($tableName)->select(array_keys($columns))->orderBy('created_at')->chunk(500, function ($hotels) {
             $startTime = date("h:i:sa");
             $columns = config('giata-commands.columns');
             $tableName = config('giata-commands.table');
@@ -38,19 +38,19 @@ class UpdateCommand extends Command
                 $response = GiataAPI::getHotelByGiataId($hotel['giataId']);
                 $hotelUpdated = XmlToArray::reformatHotel($response['property']);
                 $data = [];
-                foreach ($columns as $column) {
+                foreach ($columns as $key => $column) { // $db => $giata
                     if (isset($hotelUpdated[$column])) {
                         $columnUpdated = is_array($hotelUpdated[$column]) ? json_encode($hotelUpdated[$column]) : $hotelUpdated[$column];
-                        if ($hotel[$column] != $columnUpdated) {
-                            $data[$column] = $columnUpdated;
+                        if ($hotel[$key] != $columnUpdated) {
+                            $data[$key] = $columnUpdated;
                         }
                     }
                 }
                 if (count($data) > 0) {
                     $data['updated_at'] = Carbon::now();
-                    DB::table($tableName)->where('giataId', $hotel['giataId'])->update($data);
-                    $queries = DB::getQueryLog();
-                    $this->comment(end($queries)['query']);
+                    DB::table($tableName)->where(array_key_first($columns), $hotel[array_key_first($columns)])->update($data);
+//                    $queries = DB::getQueryLog();
+//                    $this->comment(end($queries)['query']);
                 }
             }
             $bar->finish();

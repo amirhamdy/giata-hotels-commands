@@ -50,9 +50,9 @@ class InitialCommand extends Command
             $hotel = XmlToArray::reformatHotel($hotel);
 //            dd($hotel);
             $lastGiataId = $hotel['giataId'];
-            foreach ($columns as $column) {
+            foreach ($columns as $columnDB => $column) { // $db => $giata
                 if (isset($hotel[$column])) {
-                    $data[$column] = is_array($hotel[$column]) ? json_encode($hotel[$column]) : $hotel[$column];
+                    $data[$columnDB] = is_array($hotel[$column]) ? json_encode($hotel[$column]) : $hotel[$column];
                 }
             }
             if (count($data) > 0) {

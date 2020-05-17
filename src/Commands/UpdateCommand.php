@@ -23,39 +23,47 @@ class UpdateCommand extends Command
 
     public function handle()
     {
-        $tableName = config('giata-commands.table');
-        $columns = config('giata-commands.columns');
-        $date = config('giata-commands.date');
-        DB::table($tableName)->select(array_keys($columns))->orderBy('created_at')->chunk(500, function ($hotels) {
-            $startTime = date("h:i:sa");
-            $columns = config('giata-commands.columns');
+        try {
             $tableName = config('giata-commands.table');
-            $bar = $this->output->createProgressBar(count($hotels));
-            $bar->start();
-            foreach ($hotels as $hotel) {
-                $bar->advance();
-                $hotel = json_decode(json_encode($hotel), true);
-                $response = GiataAPI::getHotelByGiataId($hotel['giataId']);
-                $hotelUpdated = XmlToArray::reformatHotel($response['property']);
-                $data = [];
-                foreach ($columns as $key => $column) { // $db => $giata
-                    if (isset($hotelUpdated[$column])) {
-                        $columnUpdated = is_array($hotelUpdated[$column]) ? json_encode($hotelUpdated[$column]) : $hotelUpdated[$column];
-                        if ($hotel[$key] != $columnUpdated) {
-                            $data[$key] = $columnUpdated;
+            $columns = config('giata-commands.columns');
+            $date = config('giata-commands.date');
+            DB::table($tableName)->select(array_keys($columns))->orderBy('created_at')->chunk(500, function ($hotels) {
+                $startTime = date("h:i:sa");
+                $columns = config('giata-commands.columns');
+                $tableName = config('giata-commands.table');
+                $bar = $this->output->createProgressBar(count($hotels));
+                $bar->start();
+                foreach ($hotels as $hotel) {
+                    $bar->advance();
+                    $hotel = json_decode(json_encode($hotel), true);
+                    $response = GiataAPI::getHotelByGiataId($hotel[array_key_first($columns)]);
+                    if (isset($response['property']))
+                        $hotelUpdated = XmlToArray::reformatHotel($response['property']);
+                    else {
+                        // write to log
+                    }
+                    $data = [];
+                    foreach ($columns as $key => $column) { // $db => $giata
+                        if (isset($hotelUpdated[$column])) {
+                            $columnUpdated = is_array($hotelUpdated[$column]) ? json_encode($hotelUpdated[$column]) : $hotelUpdated[$column];
+                            if ($hotel[$key] != $columnUpdated) {
+                                $data[$key] = $columnUpdated;
+                            }
                         }
                     }
-                }
-                if (count($data) > 0) {
-                    $data['updated_at'] = Carbon::now();
-                    DB::table($tableName)->where(array_key_first($columns), $hotel[array_key_first($columns)])->update($data);
+                    if (count($data) > 0) {
+                        $data['updated_at'] = Carbon::now();
+                        DB::table($tableName)->where(array_key_first($columns), $hotel[array_key_first($columns)])->update($data);
 //                    $queries = DB::getQueryLog();
 //                    $this->comment(end($queries)['query']);
+                    }
                 }
-            }
-            $bar->finish();
-            $endTime = date("h:i:sa");
-            $this->comment(PHP_EOL . 'consumed time: ' . CommandsHelper::calcTime($startTime, $endTime));
-        });
+                $bar->finish();
+                $endTime = date("h:i:sa");
+                $this->comment(PHP_EOL . 'consumed time: ' . CommandsHelper::calcTime($startTime, $endTime));
+            });
+        } catch (\Exception $e) {
+            $this->error($e->getLine() . ' -- ' . $e->getMessage());
+        }
     }
 }

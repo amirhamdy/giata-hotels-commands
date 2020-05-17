@@ -23,18 +23,22 @@ class InitialCommand extends Command
 
     public function handle()
     {
-        $startTime = date("h:i:sa");
-        $countries = config('giata-commands.countries');
-        $tableName = config('giata-commands.table');
-        $columns = config('giata-commands.columns');
+        try {
+            $startTime = date("h:i:sa");
+            $countries = config('giata-commands.countries');
+            $tableName = config('giata-commands.table');
+            $columns = config('giata-commands.columns');
 //        DB::table($tableName)->truncate(); // to be removed
-        $this->comment(PHP_EOL . 'working on ' . count($countries) . ' countries');
-        foreach ($countries as $country) {
-            $response = GiataAPI::getHotelsByCountry($country, true);
-            $this->init($response, $country, $columns, $tableName);
+            $this->comment(PHP_EOL . 'working on ' . count($countries) . ' countries');
+            foreach ($countries as $country) {
+                $response = GiataAPI::getHotelsByCountry($country, true);
+                $this->init($response, $country, $columns, $tableName);
+            }
+            $endTime = date("h:i:sa");
+            $this->comment(PHP_EOL . 'consumed time: ' . CommandsHelper::calcTime($startTime, $endTime));
+        } catch (\Exception $e) {
+            $this->error($e->getLine() . ' -- ' . $e->getMessage());
         }
-        $endTime = date("h:i:sa");
-        $this->comment(PHP_EOL . 'consumed time: ' . CommandsHelper::calcTime($startTime, $endTime));
     }
 
     protected function init($response, $country, $columns, $tableName)
